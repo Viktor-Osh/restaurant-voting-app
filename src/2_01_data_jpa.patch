@@ -1,0 +1,148 @@
+Index: src/main/java/ru/javaops/bootjava/repository/UserRepository.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/java/ru/javaops/bootjava/repository/UserRepository.java	(date 1606213467289)
++++ src/main/java/ru/javaops/bootjava/repository/UserRepository.java	(date 1606213467289)
+@@ -0,0 +1,7 @@
++package ru.javaops.bootjava.repository;
++
++import org.springframework.data.jpa.repository.JpaRepository;
++import ru.javaops.bootjava.model.User;
++
++public interface UserRepository extends JpaRepository<User, Integer> {
++}
+\ No newline at end of file
+Index: src/main/java/ru/javaops/bootjava/model/User.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/java/ru/javaops/bootjava/model/User.java	(revision 530c4e3c5d642911ba4cd5bcc0ed8938c3690a6d)
++++ src/main/java/ru/javaops/bootjava/model/User.java	(date 1606213467285)
+@@ -1,23 +1,44 @@
+ package ru.javaops.bootjava.model;
+ 
+-import lombok.AllArgsConstructor;
+-import lombok.Data;
+-import lombok.NoArgsConstructor;
++import lombok.*;
++import org.springframework.data.jpa.domain.AbstractPersistable;
+ 
++import javax.persistence.*;
++import javax.validation.constraints.Email;
++import javax.validation.constraints.NotEmpty;
++import javax.validation.constraints.Size;
+ import java.util.Set;
+ 
+-@Data
+-@NoArgsConstructor
++@Entity
++@Table(name = "users")
++@Getter
++@Setter
++@NoArgsConstructor(access = AccessLevel.PROTECTED)
+ @AllArgsConstructor
+-public class User {
++@ToString(callSuper = true, exclude = {"password"})
++public class User extends AbstractPersistable<Integer> {
+ 
++    @Column(name = "email", nullable = false, unique = true)
++    @Email
++    @NotEmpty
++    @Size(max = 128)
+     private String email;
+ 
++    @Column(name = "first_name")
++    @Size(max = 128)
+     private String firstName;
+ 
++    @Column(name = "last_name")
++    @Size(max = 128)
+     private String lastName;
+ 
++    @Column(name = "password")
++    @Size(max = 256)
+     private String password;
+ 
++    @Enumerated(EnumType.STRING)
++    @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "role"}, name = "user_roles_unique")})
++    @Column(name = "role")
++    @ElementCollection(fetch = FetchType.EAGER)
+     private Set<Role> roles;
+ }
+\ No newline at end of file
+Index: pom.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- pom.xml	(revision 530c4e3c5d642911ba4cd5bcc0ed8938c3690a6d)
++++ pom.xml	(date 1606213518079)
+@@ -28,6 +28,10 @@
+             <groupId>org.springframework.boot</groupId>
+             <artifactId>spring-boot-starter-web</artifactId>
+         </dependency>
++        <dependency>
++            <groupId>org.springframework.boot</groupId>
++            <artifactId>spring-boot-starter-validation</artifactId>
++        </dependency>
+ 
+         <dependency>
+             <groupId>com.h2database</groupId>
+Index: src/main/java/ru/javaops/bootjava/RestaurantVotingApplication.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/java/ru/javaops/bootjava/RestaurantVotingApplication.java	(revision 530c4e3c5d642911ba4cd5bcc0ed8938c3690a6d)
++++ src/main/java/ru/javaops/bootjava/RestaurantVotingApplication.java	(date 1606213548848)
+@@ -1,14 +1,29 @@
+ package ru.javaops.bootjava;
+ 
+ import lombok.AllArgsConstructor;
++import org.springframework.boot.ApplicationArguments;
++import org.springframework.boot.ApplicationRunner;
+ import org.springframework.boot.SpringApplication;
+ import org.springframework.boot.autoconfigure.SpringBootApplication;
++import ru.javaops.bootjava.model.Role;
++import ru.javaops.bootjava.model.User;
++import ru.javaops.bootjava.repository.UserRepository;
++
++import java.util.Set;
+ 
+ @SpringBootApplication
+ @AllArgsConstructor
+-public class RestaurantVotingApplication {
++public class RestaurantVotingApplication implements ApplicationRunner {
++    private final UserRepository userRepository;
+ 
+     public static void main(String[] args) {
+         SpringApplication.run(RestaurantVotingApplication.class, args);
+     }
++
++    @Override
++    public void run(ApplicationArguments args) {
++        userRepository.save(new User("user@gmail.com", "User_First", "User_Last", "password", Set.of(Role.ROLE_USER)));
++        userRepository.save(new User("admin@javaops.ru", "Admin_First", "Admin_Last", "admin", Set.of(Role.ROLE_USER, Role.ROLE_ADMIN)));
++        System.out.println(userRepository.findAll());
++    }
+ }
+Index: src/main/resources/application.properties
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/resources/application.properties	(revision 530c4e3c5d642911ba4cd5bcc0ed8938c3690a6d)
++++ src/main/resources/application.properties	(date 1606213518073)
+@@ -1,0 +1,9 @@
++# https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
++# JPA
++spring.jpa.show-sql=true
++spring.jpa.open-in-view=false
++#  http://docs.jboss.org/hibernate/orm/5.3/userguide/html_single/Hibernate_User_Guide.html#configurations
++spring.jpa.properties.hibernate.default_batch_fetch_size=20
++spring.jpa.properties.hibernate.format_sql=true
++# https://stackoverflow.com/questions/21257819/what-is-the-difference-between-hibernate-jdbc-fetch-size-and-hibernate-jdbc-batc
++spring.jpa.properties.hibernate.jdbc.batch_size=20
