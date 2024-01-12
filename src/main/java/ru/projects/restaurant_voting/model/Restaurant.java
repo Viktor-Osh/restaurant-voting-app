@@ -1,5 +1,6 @@
 package ru.projects.restaurant_voting.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -24,11 +25,11 @@ public class Restaurant extends NamedEntity {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")
     @OnDelete(action = OnDeleteAction.CASCADE)
     @Schema(hidden = true)
+    @JsonIgnore
     private List<Dish> dishes;
 
-    public Restaurant(Integer id, String name, Integer rating, List<Dish> dishes) {
+    public Restaurant(Integer id, String name, Integer rating) {
         super(id, name);
         this.rating = rating;
-        this.dishes = dishes;
     }
 }
