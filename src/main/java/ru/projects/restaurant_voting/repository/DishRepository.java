@@ -15,5 +15,6 @@ public interface DishRepository extends BaseRepository<Dish> {
     @Query("SELECT d FROM Dish d JOIN FETCH d.restaurant " +
             "WHERE d.restaurant.id = :restaurantId and d.menuDate = :date")
     List<Dish> getAllByDateWithRestaurant(LocalDate date, int restaurantId);
+
     List<Dish> findAllByOrderByRestaurant_IdAsc();
 }

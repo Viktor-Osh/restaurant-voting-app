@@ -3,4 +3,18 @@ Restaurant-voting application
 
 
 ### Java приложения на стеке: Spring Boot 2.x, Spring Data Rest/HATEOAS, Lombok, JPA, H2, ....
-Мы создадим с нуля основу любого современного REST веб-приложения: аутентификация и авторизация на основе ролей, регистрация пользователя в приложении, управление своим профилем и администрирование пользователей.
+Мы создадим с нуля основу любого современного REST веб-приложения: аутентификация и авторизация на основе ролей, регистр
+
+Technical requirement:
+Design and implement a REST API using Hibernate/Spring/SpringMVC (Spring-Boot preferred!) without frontend.
+The task is:
+Build a voting system for deciding where to have lunch.
+•	2 types of users: admin and regular users
+•	Admin can input a restaurant and it's lunch menu of the day (2-5 items usually, just a dish name and price)
+•	Menu changes each day (admins do the updates)
+•	Users can vote for a restaurant they want to have lunch at today
+•	Only one vote counted per user
+•	If user votes again the same day:
+o	If it is before 11:00 we assume that he changed his mind.
+o	If it is after 11:00 then it is too late, vote can't be changed
+Each restaurant provides a new menu each day.

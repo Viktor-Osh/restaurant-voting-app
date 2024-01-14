@@ -1,5 +1,6 @@
 package ru.projects.restaurant_voting.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -26,6 +27,7 @@ public class Dish extends NamedEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id", nullable = false)
+    @JsonIgnore
     private Restaurant restaurant;
 
     public Dish(Integer id, LocalDate menuDate, Double price, String name, Restaurant restaurant) {
