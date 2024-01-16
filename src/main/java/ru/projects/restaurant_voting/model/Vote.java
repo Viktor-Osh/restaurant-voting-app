@@ -2,10 +2,7 @@ package ru.projects.restaurant_voting.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 
@@ -14,6 +11,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class Vote extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -27,6 +25,4 @@ public class Vote extends BaseEntity {
     @Column(name = "menu_date")
     @NotNull
     private LocalDate menuDate;
-
-
 }

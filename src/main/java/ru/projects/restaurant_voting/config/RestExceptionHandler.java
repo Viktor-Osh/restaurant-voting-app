@@ -48,6 +48,7 @@ public class RestExceptionHandler {
         {
 // more specific first
             put(NotFoundException.class, NOT_FOUND);
+            put(VoteNotFoundException.class, NOT_FOUND);
             put(DataConflictException.class, DATA_CONFLICT);
             put(IllegalRequestDataException.class, BAD_REQUEST);
             put(AppException.class, APP_ERROR);
