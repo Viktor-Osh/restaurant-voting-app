@@ -8,6 +8,7 @@ import ru.projects.restaurant_voting.model.User;
 import ru.projects.restaurant_voting.model.Vote;
 import ru.projects.restaurant_voting.repository.RestaurantRepository;
 import ru.projects.restaurant_voting.repository.UserRepository;
+import ru.projects.restaurant_voting.repository.VoteRepository;
 
 import java.time.LocalDate;
 
@@ -18,10 +19,13 @@ public class VoteService {
 
     private final UserRepository userRepository;
 
+    private final VoteRepository voteRepository;
+
     @Transactional
     public Vote save(int userId, int restaurantId, LocalDate localDate) {
         Restaurant restaurant = restaurantRepository.getExisted(restaurantId);
         User user = userRepository.getExisted(userId);
-        return new Vote(user, restaurant, localDate);
+        Vote vote = new Vote(user, restaurant, localDate);
+        return voteRepository.save(vote);
     }
 }
