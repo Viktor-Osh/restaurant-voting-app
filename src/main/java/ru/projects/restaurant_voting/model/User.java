@@ -54,14 +54,12 @@ public class User extends NamedEntity implements HasIdAndEmail {
             uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "role"}, name = "uk_user_role"))
     @Column(name = "role")
     @ElementCollection(fetch = FetchType.EAGER)
-    @JoinColumn
-    @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<Role> roles;
 
-//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
-//    @OnDelete(action = OnDeleteAction.CASCADE)
-//    @Schema(hidden = true)
-//    private List<Vote> votes;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @Schema(hidden = true)
+    private List<Vote> votes;
 
     public User(User u) {
         this(u.id, u.name, u.email, u.password, u.enabled, u.registered, u.roles);
