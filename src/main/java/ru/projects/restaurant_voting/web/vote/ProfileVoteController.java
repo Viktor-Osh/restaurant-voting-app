@@ -66,7 +66,7 @@ public class ProfileVoteController {
             if (now.toLocalTime().isBefore(deadLine)) {
                 service.save(user.id(), restaurantId, now.toLocalDate());
             } else {
-                throw new LateVoteException("You can't change vote before: " + deadLine + ", now: "
+                throw new LateVoteException("You can't change your vote after: " + deadLine + ", now: "
                         + now.toLocalTime().truncatedTo(ChronoUnit.MINUTES));
             }
         }

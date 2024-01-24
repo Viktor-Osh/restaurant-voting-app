@@ -25,7 +25,8 @@ public class VoteService {
     public Vote save(int userId, int restaurantId, LocalDate localDate) {
         User user = userRepository.getExisted(userId);
         Restaurant restaurant = restaurantRepository.getExisted(restaurantId);
-        Vote vote = new Vote(user, restaurant, localDate);
+        Vote vote =
+                new Vote(user, restaurant, localDate);
         return voteRepository.save(vote);
     }
 

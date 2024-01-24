@@ -23,7 +23,7 @@ import java.util.List;
 @RequestMapping(value = ProfileRestaurantController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 public class ProfileRestaurantController {
 
-    static final String REST_URL = "/api/admin/restaurants";
+    static final String REST_URL = "/api/profile/restaurants";
 
     private RestaurantRepository repository;
 
@@ -33,36 +33,10 @@ public class ProfileRestaurantController {
         return repository.getExisted(id);
     }
 
-    @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable int id) {
-        log.info("delete restaurant with id={}", id);
-        repository.deleteExisted(id);
-    }
-
     @GetMapping
     public List<Restaurant> getAll() {
         log.info("getAll restaurants");
         return repository.findAll(Sort.by(Sort.Direction.ASC, "id"));
-    }
-
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Restaurant> create(@Valid @RequestBody Restaurant restaurant) {
-        log.info("create {}", restaurant);
-            ValidationUtil.checkNew(restaurant);
-            Restaurant created = repository.save(restaurant);
-            URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
-                    .path(REST_URL + "/{id}")
-                    .buildAndExpand(created.getId()).toUri();
-            return ResponseEntity.created(uriOfNewResource).body(created);
-    }
-
-    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@Valid @RequestBody Restaurant restaurant, @PathVariable int id) {
-        log.info("update {} with id={}", restaurant, id);
-        ValidationUtil.assureIdConsistent(restaurant, id);
-        repository.save(restaurant);
     }
 
     @GetMapping("/{id}/with-dishes")

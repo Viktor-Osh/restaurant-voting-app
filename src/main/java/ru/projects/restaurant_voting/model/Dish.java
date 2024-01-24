@@ -25,10 +25,13 @@ public class Dish extends NamedEntity {
     @NotNull
     private Double price;
 
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     private Restaurant restaurant;
+
+    @Column(name = "restaurant_id", updatable = false, insertable = false)
+    private int restaurantId;
 
     public Dish(Integer id, LocalDate menuDate, Double price, String name, Restaurant restaurant) {
         super(id, name);

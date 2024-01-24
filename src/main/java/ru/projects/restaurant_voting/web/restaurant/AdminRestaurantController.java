@@ -20,35 +20,21 @@ import java.util.List;
 @RestController
 @AllArgsConstructor
 @Slf4j
-@RequestMapping(value = RestaurantController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
-public class RestaurantController {
+@RequestMapping(value = AdminRestaurantController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+public class AdminRestaurantController {
 
-    static final String REST_URL = "/api/restaurants";
+    static final String REST_URL = "/api/admin/restaurants";
 
     private RestaurantRepository repository;
 
-    @GetMapping("/{id}")
-    public Restaurant get(@PathVariable int id) {
-        log.info("get restaurant with id={}", id);
-        return repository.getExisted(id);
-    }
-
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasRole('ADMIN')")
     public void delete(@PathVariable int id) {
         log.info("delete restaurant with id={}", id);
         repository.deleteExisted(id);
     }
 
-    @GetMapping
-    public List<Restaurant> getAll() {
-        log.info("getAll restaurants");
-        return repository.findAll(Sort.by(Sort.Direction.ASC, "id"));
-    }
-
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Restaurant> create(@Valid @RequestBody Restaurant restaurant) {
         log.info("create {}", restaurant);
             ValidationUtil.checkNew(restaurant);
@@ -61,16 +47,9 @@ public class RestaurantController {
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasRole('ADMIN')")
     public void update(@Valid @RequestBody Restaurant restaurant, @PathVariable int id) {
         log.info("update {} with id={}", restaurant, id);
         ValidationUtil.assureIdConsistent(restaurant, id);
         repository.save(restaurant);
-    }
-
-    @GetMapping("/{id}/with-dishes")
-    public ResponseEntity<Restaurant> getWithDishes(@PathVariable int id) {
-        log.info("get restaurant with id={} with dishes", id);
-        return ResponseEntity.of(repository.getWithDishes(id));
     }
 }
