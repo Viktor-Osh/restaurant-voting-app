@@ -31,8 +31,14 @@ spring:
 
   # https://docs.spring.io/spring-boot/docs/current/reference/html/appendix-application-properties.html#common-application-properties-cache
   cache:
-    cache-names: users
-    caffeine.spec: maximumSize=1,expireAfterAccess=60s
+    caffeine:
+      caches:
+        users:
+          spec: maximumSize=100,expireAfterAccess=3600s
+        restaurants:
+          spec: maximumSize=20, expireAfterAccess=300s
+        dishes:
+          spec: maximumSize=200, expireAfterAccess=300s
 
 logging:
   level:

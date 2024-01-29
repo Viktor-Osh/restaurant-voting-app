@@ -40,7 +40,7 @@
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
 
-        <!--        jackson-->
+        <!--jackson-->
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-hibernate5-jakarta</artifactId>
@@ -50,13 +50,6 @@
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>${springdoc.version}</version>
         </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-rest -->
-
-        <!--        <dependency>-->
-        <!--            <groupId>org.springframework.boot</groupId>-->
-        <!--            <artifactId>spring-boot-starter-data-rest</artifactId>-->
-        <!--        </dependency>-->
 
         <!--cache-->
         <dependency>

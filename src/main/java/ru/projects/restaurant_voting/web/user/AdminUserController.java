@@ -1,6 +1,9 @@
 package ru.projects.restaurant_voting.web.user;
 
 import jakarta.validation.Valid;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -22,6 +25,8 @@ import static ru.projects.restaurant_voting.util.validation.ValidationUtil.check
 public class AdminUserController extends AbstractUserController {
 
     static final String REST_URL = "/api/admin/users";
+
+    @CacheEvict(value = "users", allEntries = true)
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable int id) {
@@ -34,6 +39,7 @@ public class AdminUserController extends AbstractUserController {
         return repository.findAll(Sort.by(Sort.Direction.ASC, "name", "email"));
     }
 
+    @CachePut(value = "users", key = "#user.email")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> createWithLocation(@Valid @RequestBody User user) {
         log.info("create {}", user);
@@ -45,6 +51,7 @@ public class AdminUserController extends AbstractUserController {
         return ResponseEntity.created(uriOfNewResource).body(created);
     }
 
+    @CachePut(value = "users", key = "#user.email")
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void update(@Valid @RequestBody User user, @PathVariable int id) {
@@ -53,12 +60,14 @@ public class AdminUserController extends AbstractUserController {
         repository.prepareAndSave(user);
     }
 
+    @Cacheable(value = "users", key = "#email")
     @GetMapping("/by-email")
     public User getByEmail(@RequestParam String email) {
         log.info("getByEmail {}", email);
         return repository.getExistedByEmail(email);
     }
 
+    @CacheEvict(value = "users", allEntries = true)
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional

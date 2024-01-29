@@ -3,23 +3,11 @@ package ru.projects.restaurant_voting.web.vote;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import ru.projects.restaurant_voting.error.LateVoteException;
-import ru.projects.restaurant_voting.error.VoteNotFoundException;
 import ru.projects.restaurant_voting.model.Vote;
 import ru.projects.restaurant_voting.repository.VoteRepository;
-import ru.projects.restaurant_voting.service.VoteService;
-import ru.projects.restaurant_voting.web.AuthUser;
 
-import java.net.URI;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @RestController
@@ -38,13 +26,13 @@ public class AdminVoteController {
     }
 
     @GetMapping("/user/{userId}")
-    public Vote getByUserId(@PathVariable int userId) {
+    public List<Vote> getByUserId(@PathVariable int userId) {
         log.info("get user id={} votes", userId);
-        return repository.findByUserId(userId).orElseThrow(() -> new VoteNotFoundException("User id=" + userId + " doesn't have votes"));
+        return repository.findAllByUserId(userId);
     }
 
     @GetMapping("/date/{date}")
-    public List<Vote> getAllByDate(@RequestParam LocalDate date) {
+    public List<Vote> getAllByDate(@PathVariable LocalDate date) {
         return repository.getAllByDate(date);
     }
 }

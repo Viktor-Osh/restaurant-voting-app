@@ -8,10 +8,10 @@ import lombok.Value;
 public class RestaurantTo extends NamedTo {
 
 
-    Integer rating;
+    String address;
 
-    public RestaurantTo(Integer id, String name, Integer rating) {
+    public RestaurantTo(Integer id, String name, String address) {
         super(id, name);
-        this.rating = rating;
+        this.address = address;
     }
 }

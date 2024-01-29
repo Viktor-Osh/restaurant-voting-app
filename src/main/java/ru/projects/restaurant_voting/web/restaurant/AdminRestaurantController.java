@@ -3,11 +3,11 @@ package ru.projects.restaurant_voting.web.restaurant;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Sort;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.projects.restaurant_voting.model.Restaurant;
@@ -15,7 +15,6 @@ import ru.projects.restaurant_voting.repository.RestaurantRepository;
 import ru.projects.restaurant_voting.util.validation.ValidationUtil;
 
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @AllArgsConstructor
@@ -25,8 +24,11 @@ public class AdminRestaurantController {
 
     static final String REST_URL = "/api/admin/restaurants";
 
+    static final String RESTAURANT_CACHE = "restaurants";
+
     private RestaurantRepository repository;
 
+    @CacheEvict(value = RESTAURANT_CACHE, key = "#id")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable int id) {
@@ -45,6 +47,7 @@ public class AdminRestaurantController {
             return ResponseEntity.created(uriOfNewResource).body(created);
     }
 
+    @CachePut(value = RESTAURANT_CACHE, key = "#id")
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void update(@Valid @RequestBody Restaurant restaurant, @PathVariable int id) {

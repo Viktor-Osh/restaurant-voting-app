@@ -2,22 +2,26 @@ package ru.projects.restaurant_voting.web.vote;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.projects.restaurant_voting.error.LateVoteException;
-import ru.projects.restaurant_voting.error.VoteNotFoundException;
+import ru.projects.restaurant_voting.error.NotFoundException;
 import ru.projects.restaurant_voting.model.Vote;
 import ru.projects.restaurant_voting.repository.VoteRepository;
 import ru.projects.restaurant_voting.service.VoteService;
 import ru.projects.restaurant_voting.web.AuthUser;
 
 import java.net.URI;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 @RestController
 @AllArgsConstructor
@@ -26,48 +30,47 @@ import java.time.temporal.ChronoUnit;
 public class ProfileVoteController {
     static final String REST_URL = "/api/profile/votes";
 
-    static final LocalTime deadLine = LocalTime.of(11, 0);
+    static final LocalTime deadLine = LocalTime.of(21, 0);
 
     private VoteRepository repository;
 
     private VoteService service;
 
     @GetMapping()
-    public Vote getByUserId(@AuthenticationPrincipal AuthUser user) {
+    public List<Vote> getAll(@AuthenticationPrincipal AuthUser user) {
         log.info("get user id={} votes", user.id());
-        return repository.findByUserId(user.id()).orElseThrow(() -> new VoteNotFoundException("User id=" + user.id() + " doesn't have votes"));
+        return repository.findAllByUserId(user.id());
     }
 
-    @DeleteMapping("/{id}")
-    public void delete(@AuthenticationPrincipal AuthUser user, @PathVariable int id) {
-        log.info("delete vote for date: {}", id);
-        Vote vote = repository.getBelonged(user.id(), id);
-        repository.delete(vote);
+    @GetMapping("/date/{date}")
+    public Vote getByDate(@AuthenticationPrincipal AuthUser user, @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        return repository.getByDate(user.id(), date).orElseThrow(() -> new NotFoundException("User id=" + user.id() + " has no vote for the date " + date));
     }
 
-    @PostMapping("/restaurant/{restaurantId}")
+    @PostMapping(value = "/restaurant/{restaurantId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Vote> create(@AuthenticationPrincipal AuthUser user, @PathVariable int restaurantId) {
-        log.info("create vote for restaurant {}", restaurantId);
-        LocalDateTime now = LocalDateTime.now();
-        if (service.voteExist(user.id(), now.toLocalDate())) {
+        log.info("User with id={} create vote for restaurant {}", user.id(), restaurantId);
+        LocalDate now = LocalDate.now();
+        if (service.voteExist(user.id(), now)) {
             throw new LateVoteException("User with id =" + user.id() + " has already voted today");
         }
-        Vote created = service.save(user.id(), restaurantId, now.toLocalDate());
+        Vote created = service.save(user.id(), restaurantId, now);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
-                    .path(REST_URL + "/{id}")
-                    .buildAndExpand(created.getId()).toUri();
-            return ResponseEntity.created(uriOfNewResource).body(created);
+                .path(REST_URL + "/{id}")
+                .buildAndExpand(created.getId()).toUri();
+        return ResponseEntity.created(uriOfNewResource).body(created);
     }
 
-            @PutMapping("/restaurant/{restaurantId}")
-        public void update(@AuthenticationPrincipal AuthUser user, @PathVariable int restaurantId) {
-            LocalDateTime now = LocalDateTime.now();
-            getByUserId(user);
-            if (now.toLocalTime().isBefore(deadLine)) {
-                service.save(user.id(), restaurantId, now.toLocalDate());
-            } else {
-                throw new LateVoteException("You can't change your vote after: " + deadLine + ", now: "
-                        + now.toLocalTime().truncatedTo(ChronoUnit.MINUTES));
-            }
+    @PutMapping(value = "/restaurant/{restaurantId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void update(@AuthenticationPrincipal AuthUser user, @PathVariable int restaurantId) {
+        LocalDateTime now = LocalDateTime.now();
+        Vote vote = getByDate(user, now.toLocalDate());
+        if (now.toLocalTime().isBefore(deadLine)) {
+            service.update(vote, restaurantId);
+        } else {
+            throw new LateVoteException("You can't change your vote after: " + deadLine + ", now: "
+                    + now.toLocalTime().truncatedTo(ChronoUnit.MINUTES));
         }
+    }
 }

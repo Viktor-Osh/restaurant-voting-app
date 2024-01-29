@@ -8,10 +8,10 @@ VALUES ('USER', 1),
        ('ADMIN', 2),
        ('USER', 2);
 
-INSERT INTO RESTAURANT(NAME, RATING)
-VALUES ('KFC', 0),
-       ('GOURMAND', 0),
-       ('Georgia', 0);
+INSERT INTO RESTAURANT(NAME, ADDRESS)
+VALUES ('KFC', 'Moscow, Red Square'),
+       ('GOURMAND', 'Moscow, Pushkina st. 6'),
+       ('Enjoy food', 'St.Petersburg, Lenina st. 1');
 
 INSERT INTO DISH (NAME, MENU_DATE, PRICE, RESTAURANT_ID)
 VALUES ('fried eggs', '2024-01-01', 10.5, 1),
@@ -39,3 +39,11 @@ VALUES ('fried eggs', '2024-01-01', 10.5, 1),
        ('lagman', '2024-01-02', 8, 3),
        ('chiken soup', '2024-01-02', 11, 3),
        ('tea', '2024-01-02', 4.7, 3);
+
+INSERT INTO VOTE(MENU_DATE, RESTAURANT_ID, USER_ID)
+VALUES ('2024-01-01', 2, 1),
+       ('2024-01-01', 1, 2),
+       ('2024-01-01', 3, 3),
+       ('2024-01-02', 3, 3),
+       ('2024-01-02', 2, 2),
+       ('2024-01-02', 1, 1);

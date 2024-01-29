@@ -19,6 +19,9 @@ public class Vote extends BaseEntity {
     @JsonIgnore
     private User user;
 
+    @Column(name = "user_id", updatable = false, insertable = false)
+    private int userId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id", nullable = false)
     @JsonIgnore
@@ -34,6 +37,8 @@ public class Vote extends BaseEntity {
     public Vote(User user, Restaurant restaurant, LocalDate menuDate) {
         super();
         this.user = user;
+        this.userId = user.id;
+        this.restaurantId = restaurant.id();
         this.restaurant = restaurant;
         this.menuDate = menuDate;
     }

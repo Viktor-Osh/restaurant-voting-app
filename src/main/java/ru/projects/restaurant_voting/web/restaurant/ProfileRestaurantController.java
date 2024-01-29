@@ -1,21 +1,21 @@
 package ru.projects.restaurant_voting.web.restaurant;
 
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import ru.projects.restaurant_voting.model.Restaurant;
 import ru.projects.restaurant_voting.repository.RestaurantRepository;
-import ru.projects.restaurant_voting.util.validation.ValidationUtil;
 
-import java.net.URI;
 import java.util.List;
+
+import static ru.projects.restaurant_voting.web.restaurant.AdminRestaurantController.RESTAURANT_CACHE;
 
 @RestController
 @AllArgsConstructor
@@ -27,10 +27,11 @@ public class ProfileRestaurantController {
 
     private RestaurantRepository repository;
 
+    @Cacheable(value = RESTAURANT_CACHE, key = "#id")
     @GetMapping("/{id}")
-    public Restaurant get(@PathVariable int id) {
+    public  ResponseEntity<Restaurant> get(@PathVariable int id) {
         log.info("get restaurant with id={}", id);
-        return repository.getExisted(id);
+        return ResponseEntity.of(repository.findById(id));
     }
 
     @GetMapping
