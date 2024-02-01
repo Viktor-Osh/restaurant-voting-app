@@ -32,7 +32,7 @@
         @GetMapping
         public List<Dish> getAll() {
             log.info("getAll dishes");
-            return repository.findAllByOrderByRestaurant_IdAsc();
+            return repository.findAllByOrderByRestaurant_IdAscIdAsc();
         }
 
         @Cacheable(value = DISH_CACHE, key = "#date")

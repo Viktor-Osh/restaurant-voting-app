@@ -10,40 +10,32 @@ VALUES ('USER', 1),
 
 INSERT INTO RESTAURANT(NAME, ADDRESS)
 VALUES ('KFC', 'Moscow, Red Square'),
-       ('GOURMAND', 'Moscow, Pushkina st. 6'),
-       ('Enjoy food', 'St.Petersburg, Lenina st. 1');
+       ('GOURMAND', 'Moscow, Pushkina st. 6');
 
 INSERT INTO DISH (NAME, MENU_DATE, PRICE, RESTAURANT_ID)
 VALUES ('fried eggs', '2024-01-01', 10.5, 1),
        ('hamburger', '2024-01-01', 15.1, 1),
        ('fried potato', '2024-01-01', 10, 1),
-       ('coffee', '2024-01-01', 6, 2),
+       ('coffee', '2024-01-01', 6, 1),
 
-       ('odjahuri', '2024-01-01', 15, 2),
-       ('khabidzgina', '2024-01-01', 10, 2),
+       ('khinkali', '2024-01-01', 15, 2),
+       ('plov', '2024-01-01', 10, 2),
        ('juice', '2024-01-01', 4.4, 2),
 
-       ('khinkali', '2024-01-01', 8, 3),
-       ('plov', '2024-01-01', 12, 3),
-       ('tea', '2024-01-01', 4.5, 3),
+       ('borsch', current_date, 14, 1),
+       ('mushroom soup', current_date, 12.1, 1),
+       ('popcorn', current_date, 14, 1),
 
-       ('borsch', '2024-01-02', 14, 1),
-       ('mushroom soup', '2024-01-02', 12.1, 1),
-       ('popcorn', '2024-01-02', 14, 1),
-       ('coffee', '2024-01-02', 6, 2),
+       ('beef steak', current_date, 11, 2),
+       ('dranniki', current_date, 12, 2),
+       ('juice', current_date, 4.4, 2);
 
-       ('beef steak', '2024-01-02', 11, 2),
-       ('dranniki', '2024-01-02', 12, 2),
-       ('juice', '2024-01-02', 4.3, 2),
-
-       ('lagman', '2024-01-02', 8, 3),
-       ('chiken soup', '2024-01-02', 11, 3),
-       ('tea', '2024-01-02', 4.7, 3);
 
 INSERT INTO VOTE(MENU_DATE, RESTAURANT_ID, USER_ID)
 VALUES ('2024-01-01', 2, 1),
        ('2024-01-01', 1, 2),
-       ('2024-01-01', 3, 3),
-       ('2024-01-02', 3, 3),
+       ('2024-01-01', 1, 3),
+       ('2024-01-02', 2, 3),
        ('2024-01-02', 2, 2),
-       ('2024-01-02', 1, 1);
+       ('2024-01-02', 1, 1),
+       (current_date, 1, 1);

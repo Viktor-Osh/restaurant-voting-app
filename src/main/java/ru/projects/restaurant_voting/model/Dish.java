@@ -31,13 +31,14 @@ public class Dish extends NamedEntity {
     private Restaurant restaurant;
 
     @Column(name = "restaurant_id", updatable = false, insertable = false)
-    private int restaurantId;
+    private Integer restaurantId;
 
     public Dish(Integer id, LocalDate menuDate, Double price, String name, Restaurant restaurant) {
         super(id, name);
         this.menuDate = menuDate;
         this.price = price;
         this.restaurant = restaurant;
+        this.restaurantId = restaurant.id();
     }
 }
 
