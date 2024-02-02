@@ -66,6 +66,11 @@ public class AdminUserController extends AbstractUserController {
         log.info("getByEmail {}", email);
         return repository.getExistedByEmail(email);
     }
+    @GetMapping("/{id}")
+    public User get(@PathVariable Integer id) {
+        log.info("get user {}", id);
+        return repository.getExisted(id);
+    }
 
     @CacheEvict(value = "users", allEntries = true)
     @PatchMapping("/{id}")

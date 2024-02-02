@@ -38,7 +38,9 @@ public class Dish extends NamedEntity {
         this.menuDate = menuDate;
         this.price = price;
         this.restaurant = restaurant;
-        this.restaurantId = restaurant.id();
+        if (restaurant != null) {
+            this.restaurantId = restaurant.id();
+        }
     }
 }
 

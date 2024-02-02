@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.projects.restaurant_voting.web.dish.DishTestData.*;
 import static ru.projects.restaurant_voting.web.dish.ProfileDishController.REST_URL;
+import static ru.projects.restaurant_voting.web.user.UserTestData.NOT_FOUND;
 import static ru.projects.restaurant_voting.web.user.UserTestData.USER_MAIL;
 
 class ProfileDishControllerTest extends AbstractControllerTest {
@@ -25,6 +26,14 @@ class ProfileDishControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(DISH_MATCHER.contentJson(dish1));
+    }
+
+    @Test
+    @WithUserDetails(value = USER_MAIL)
+    void getNotFound() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + NOT_FOUND))
+                .andDo(print())
+                .andExpect(status().isNotFound());
     }
 
     @Test
