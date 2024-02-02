@@ -40,12 +40,16 @@ public class Vote extends BaseEntity {
     @NotNull
     private LocalDate menuDate;
 
-    public Vote(User user, Restaurant restaurant, LocalDate menuDate) {
-        super();
+    public Vote(Integer id, User user, Restaurant restaurant, LocalDate menuDate) {
+        super(id);
         this.user = user;
-        this.userId = user.id;
-        this.restaurantId = restaurant.id();
+        if (user != null) {
+            this.userId = user.id;
+        }
         this.restaurant = restaurant;
+        if (restaurant != null) {
+            this.restaurantId = restaurant.id();
+        }
         this.menuDate = menuDate;
     }
 }

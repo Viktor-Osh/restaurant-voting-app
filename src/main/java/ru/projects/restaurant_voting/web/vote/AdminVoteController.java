@@ -19,6 +19,12 @@ public class AdminVoteController {
 
     private VoteRepository repository;
 
+    @GetMapping("/{id}")
+    public Vote get(@PathVariable int id) {
+        log.info("get vote {}", id);
+        return repository.getExisted(id);
+    }
+
     @GetMapping
     public List<Vote> getAll() {
         log.info("getAll votes");
