@@ -14,6 +14,7 @@ import ru.projects.restaurant_voting.error.NotFoundException;
 import ru.projects.restaurant_voting.model.Vote;
 import ru.projects.restaurant_voting.repository.VoteRepository;
 import ru.projects.restaurant_voting.service.VoteService;
+import ru.projects.restaurant_voting.util.ClockHolder;
 import ru.projects.restaurant_voting.web.AuthUser;
 
 import java.net.URI;
@@ -30,7 +31,7 @@ import java.util.List;
 public class ProfileVoteController {
     static final String REST_URL = "/api/profile/votes";
 
-    static final LocalTime deadLine = LocalTime.of(21, 0);
+    static final LocalTime deadLine = LocalTime.of(11, 0);
 
     private VoteRepository repository;
 
@@ -47,10 +48,10 @@ public class ProfileVoteController {
         return repository.getByDate(user.id(), date).orElseThrow(() -> new NotFoundException("User id=" + user.id() + " has no vote for the date " + date));
     }
 
-    @PostMapping(value = "/restaurant/{restaurantId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/restaurant/{restaurantId}")
     public ResponseEntity<Vote> create(@AuthenticationPrincipal AuthUser user, @PathVariable int restaurantId) {
         log.info("User with id={} create vote for restaurant {}", user.id(), restaurantId);
-        LocalDate now = LocalDate.now();
+        LocalDate now = LocalDate.now(ClockHolder.getClock());
         if (service.voteExist(user.id(), now)) {
             throw new LateVoteException("User with id =" + user.id() + " has already voted today");
         }
@@ -61,10 +62,10 @@ public class ProfileVoteController {
         return ResponseEntity.created(uriOfNewResource).body(created);
     }
 
-    @PutMapping(value = "/restaurant/{restaurantId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/restaurant/{restaurantId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void update(@AuthenticationPrincipal AuthUser user, @PathVariable int restaurantId) {
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now(ClockHolder.getClock());
         Vote vote = getByDate(user, now.toLocalDate());
         if (now.toLocalTime().isBefore(deadLine)) {
             service.update(vote, restaurantId);

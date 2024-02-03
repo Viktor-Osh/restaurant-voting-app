@@ -25,8 +25,15 @@ public class VoteTestData {
 
     public static final List<Vote> allVotes = List.of(vote1, vote2, vote3, vote4);
     public static final List<Vote> votesByDate = List.of(vote1, vote2, vote3);
-    public static final List<Vote> votesByUser = List.of(vote1, vote4);
+    public static final List<Vote> userVotesByDate = List.of(vote1);
+    public static final List<Vote> votesByUser1 = List.of(vote1, vote4);
 
+    public static Vote getNewAdminVote() {
+        return new Vote(null, admin, restaurant1, LocalDate.now());
+    }
 
+    public static Vote getUpdated() {
+        return new Vote(VOTE4_ID, user, restaurant2, LocalDate.now());
+    }
 
 }
