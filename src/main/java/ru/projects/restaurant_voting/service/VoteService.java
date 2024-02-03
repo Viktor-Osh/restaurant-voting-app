@@ -33,6 +33,7 @@ public class VoteService {
     public void update(Vote vote, int restaurantId) {
         Restaurant restaurant = restaurantRepository.getExisted(restaurantId);
         vote.setRestaurant(restaurant);
+        vote.setRestaurantId(restaurantId);
         voteRepository.save(vote);
     }
 
